@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>האתר שלי</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">MySite</span>
+    <ul class="nav-links">
+      <li><a href="#home">בית</a></li>
+      <li><a href="#about">אודות</a></li>
+      <li><a href="#contact">צור קשר</a></li>
+      <li><button class="toggle-btn" onclick="toggleDark()">🌙 מצב כהה</button></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="home">
+    <h1>ברוכים <span>הבאים</span></h1>
+    <p>זהו דף הבית של האתר שלי. עוצב בסגנון נקי ומודרני עם סרגל ניווט נוח.</p>
+    <a href="#about" class="btn">התחל עכשיו</a>
+  </section>
+
+  <section class="about" id="about">
+    <div class="section-inner">
+      <h2>אודות</h2>
+      <p>אנחנו צוות מפתחים עם תשוקה לבניית מוצרים דיגיטליים מרשימים. אנחנו מאמינים בעיצוב נקי, חוויית משתמש מעולה וקוד איכותי.</p>
+      <div class="cards">
+        <div class="card">
+          <span class="card-icon">💡</span>
+          <h3>חדשנות</h3>
+          <p>פתרונות יצירתיים לאתגרים מורכבים.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🚀</span>
+          <h3>ביצועים</h3>
+          <p>מהירות ויעילות בכל פרויקט.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🎨</span>
+          <h3>עיצוב</h3>
+          <p>ממשקים יפים ונוחים לשימוש.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="section-inner">
+      <h2>צור קשר</h2>
+      <p>נשמח לשמוע ממך. מלא את הטופס ונחזור אליך בהקדם.</p>
+      <form class="contact-form">
+        <input type="text" placeholder="שם מלא" />
+        <input type="email" placeholder="כתובת אימייל" />
+        <textarea rows="5" placeholder="ההודעה שלך..."></textarea>
+        <button type="submit" class="btn">שלח הודעה</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2024 MySite. כל הזכויות שמורות.</p>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </footer>
+
+  <script>
+    function toggleDark() {
+      const isDark = document.body.classList.toggle('dark');
+      const btn = document.querySelector('.toggle-btn');
+      btn.textContent = isDark ? '☀️ מצב בהיר' : '🌙 מצב כהה';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+      document.querySelector('.toggle-btn').textContent = '☀️ מצב בהיר';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>סימניות</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      color: #222;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: #1a1a2e;
+    }
+
+    header h1 span {
+      color: #e94560;
+    }
+
+    header p {
+      color: #888;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    /* ─── Form ─── */
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.8rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      margin-bottom: 2rem;
+    }
+
+    .form-card h2 {
+      font-size: 1.1rem;
+      color: #1a1a2e;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .form-group input {
+      padding: 0.8rem 1rem;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #e94560;
+    }
+
+    .form-group input::placeholder {
+      color: #bbb;
+    }
+
+    .btn-add {
+      background: #e94560;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      width: 100%;
+    }
+
+    .btn-add:hover {
+      background: #c73652;
+      transform: translateY(-1px);
+    }
+
+    .error-msg {
+      color: #e94560;
+      font-size: 0.85rem;
+      min-height: 1.1rem;
+    }
+
+    /* ─── Bookmarks List ─── */
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .list-header h2 {
+      font-size: 1.1rem;
+      color: #1a1a2e;
+    }
+
+    .count-badge {
+      background: #e94560;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #bbb;
+    }
+
+    .empty-state .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+
+    .bookmark-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .bookmark-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bookmark-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+    .favicon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .favicon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .bookmark-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .bookmark-info .title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bookmark-info .url {
+      font-size: 0.8rem;
+      color: #aaa;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 0.15rem;
+    }
+
+    .bookmark-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .btn-visit {
+      background: #f0f2f5;
+      color: #555;
+      border: none;
+      border-radius: 8px;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-visit:hover {
+      background: #e2e6ea;
+    }
+
+    .btn-delete {
+      background: #fff0f2;
+      color: #e94560;
+      border: none;
+      border-radius: 8px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #ffe0e5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>מנהל <span>הסימניות</span></h1>
+      <p>שמור קישורים חשובים במהירות</p>
+    </header>
+
+    <div class="form-card">
+      <h2>הוסף סימניה חדשה</h2>
+      <div class="form-group">
+        <input type="text" id="input-title" placeholder="כותרת (לדוגמה: Google)" />
+        <input type="url"  id="input-url"   placeholder="כתובת URL (לדוגמה: https://google.com)" />
+        <span class="error-msg" id="error-msg"></span>
+        <button class="btn-add" onclick="addBookmark()">הוסף סימניה</button>
+      </div>
+    </div>
+
+    <div class="list-header">
+      <h2>הסימניות שלי</h2>
+      <span class="count-badge" id="count-badge">0</span>
+    </div>
+
+    <div id="bookmark-container"></div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'my_bookmarks';
+
+    function load() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+
+    function save(bookmarks) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+    }
+
+    function getFaviconUrl(url) {
+      try {
+        const origin = new URL(url).origin;
+        return `https://www.google.com/s2/favicons?sz=32&domain_url=${origin}`;
+      } catch {
+        return null;
+      }
+    }
+
+    function addBookmark() {
+      const titleEl = document.getElementById('input-title');
+      const urlEl   = document.getElementById('input-url');
+      const errorEl = document.getElementById('error-msg');
+
+      const title = titleEl.value.trim();
+      const url   = urlEl.value.trim();
+
+      errorEl.textContent = '';
+
+      if (!title) { errorEl.textContent = 'נא להזין כותרת.'; titleEl.focus(); return; }
+      if (!url)   { errorEl.textContent = 'נא להזין כתובת URL.'; urlEl.focus(); return; }
+
+      try { new URL(url); } catch {
+        errorEl.textContent = 'כתובת URL לא תקינה.';
+        urlEl.focus();
+        return;
+      }
+
+      const bookmarks = load();
+      bookmarks.unshift({ id: Date.now(), title, url });
+      save(bookmarks);
+
+      titleEl.value = '';
+      urlEl.value   = '';
+      render();
+    }
+
+    function deleteBookmark(id) {
+      const bookmarks = load().filter(b => b.id !== id);
+      save(bookmarks);
+      render();
+    }
+
+    function render() {
+      const bookmarks = load();
+      const container = document.getElementById('bookmark-container');
+      const badge     = document.getElementById('count-badge');
+
+      badge.textContent = bookmarks.length;
+
+      if (bookmarks.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔖</div>
+            <p>אין סימניות עדיין. הוסף את הראשונה!</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="bookmark-list">${
+        bookmarks.map(b => {
+          const favicon = getFaviconUrl(b.url);
+          const faviconHtml = favicon
+            ? `<img src="${favicon}" onerror="this.parentElement.textContent='🔗'" />`
+            : '🔗';
+          return `
+            <div class="bookmark-item">
+              <div class="favicon">${faviconHtml}</div>
+              <div class="bookmark-info">
+                <div class="title">${escapeHtml(b.title)}</div>
+                <div class="url">${escapeHtml(b.url)}</div>
+              </div>
+              <div class="bookmark-actions">
+                <a class="btn-visit" href="${escapeHtml(b.url)}" target="_blank" rel="noopener">
+                  פתח ↗
+                </a>
+                <button class="btn-delete" onclick="deleteBookmark(${b.id})">✕</button>
+              </div>
+            </div>`;
+        }).join('')
+      }</div>`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('input-url').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addBookmark();
+    });
+    document.getElementById('input-title').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('input-url').focus();
+    });
+
+    render();
+  </script>
+
+</body>
+</html>
