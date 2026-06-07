@@ -254,6 +254,60 @@
     .btn-delete:hover {
       background: #ffe0e5;
     }
+
+    /* ─── Search ─── */
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-wrapper .search-icon {
+      position: absolute;
+      top: 50%;
+      right: 0.9rem;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: #bbb;
+      pointer-events: none;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 0.75rem 2.5rem 0.75rem 1rem;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    #search-input:focus {
+      border-color: #e94560;
+    }
+
+    #search-input::placeholder {
+      color: #bbb;
+    }
+
+    .highlight {
+      background: #ffe066;
+      border-radius: 3px;
+      padding: 0 1px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: #bbb;
+    }
+
+    .no-results .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.6rem;
+    }
   </style>
 </head>
 <body>
@@ -273,6 +327,11 @@
         <span class="error-msg" id="error-msg"></span>
         <button class="btn-add" onclick="addBookmark()">הוסף סימניה</button>
       </div>
+    </div>
+
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="חפש לפי כותרת..." />
     </div>
 
     <div class="list-header">
@@ -338,18 +397,41 @@
       render();
     }
 
+    function highlight(text, query) {
+      if (!query) return escapeHtml(text);
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return escapeHtml(text).replace(
+        new RegExp(escaped, 'gi'),
+        m => `<mark class="highlight">${m}</mark>`
+      );
+    }
+
     function render() {
-      const bookmarks = load();
+      const all       = load();
+      const query     = document.getElementById('search-input').value.trim().toLowerCase();
+      const bookmarks = query
+        ? all.filter(b => b.title.toLowerCase().includes(query))
+        : all;
+
       const container = document.getElementById('bookmark-container');
       const badge     = document.getElementById('count-badge');
 
-      badge.textContent = bookmarks.length;
+      badge.textContent = all.length;
 
-      if (bookmarks.length === 0) {
+      if (all.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">🔖</div>
             <p>אין סימניות עדיין. הוסף את הראשונה!</p>
+          </div>`;
+        return;
+      }
+
+      if (bookmarks.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <div class="empty-icon">🔍</div>
+            <p>לא נמצאו סימניות עבור "<strong>${escapeHtml(query)}</strong>"</p>
           </div>`;
         return;
       }
@@ -364,7 +446,7 @@
             <div class="bookmark-item">
               <div class="favicon">${faviconHtml}</div>
               <div class="bookmark-info">
-                <div class="title">${escapeHtml(b.title)}</div>
+                <div class="title">${highlight(b.title, query)}</div>
                 <div class="url">${escapeHtml(b.url)}</div>
               </div>
               <div class="bookmark-actions">
@@ -381,6 +463,8 @@
     function escapeHtml(str) {
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
+
+    document.getElementById('search-input').addEventListener('input', render);
 
     document.getElementById('input-url').addEventListener('keydown', e => {
       if (e.key === 'Enter') addBookmark();
